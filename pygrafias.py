@@ -20,19 +20,19 @@ class DirectorySelectorApp:
         top_space = tk.Frame(master, height=space, width=window_width)
         top_space.pack(pady=(0, space))
 
-        self.button1 = tk.Button(self.master, text="Selecione a pasta origem.", command=self.fonte_direc)
+        self.button1 = tk.Button(self.master, text="Selecione a pasta origem", command=self.fonte_direc)
         self.button1.pack(pady=space)
 
-        self.button2 = tk.Button(self.master, text="Selecionar a pasta destino.", command=self.destino_direc)
+        self.button2 = tk.Button(self.master, text="Selecionar a pasta destino", command=self.destino_direc)
         self.button2.pack(pady=space)
 
-        self.button3 = tk.Button(self.master, text="Selecionar o PDF.", command=self.pdf_direc)
+        self.button3 = tk.Button(self.master, text="Selecionar o PDF", command=self.pdf_direc)
         self.button3.pack(pady=space)
 
         self.space_label = tk.Label(self.master, text="")
         self.space_label.pack(pady=space)
 
-        self.button4 = tk.Button(self.master, text="TRASNFERIR FOTOS!", command=self.transfer)
+        self.button4 = tk.Button(self.master, text="Transferir!", command=self.transfer)
         self.button4.pack(pady=space)
 
     def fonte_direc(self):
@@ -57,20 +57,25 @@ class DirectorySelectorApp:
             for text in updated_text_list:
                 archives.append(text.split('.')[0])
 
-
         del archives[0]
         cont = 1
+        for file_full in  glob.iglob(self.fonte+'/*'):
+            transf = False
+            file = os.path.basename(file_full)
+            for archive in archives:
+                if archive.endswith(file.split('.')[0]):
+                    shutil.move(file_full, os.path.join(self.destino, file))
+                    print(f"{cont}. '{file}' transferido com sucesso!")
+                    cont = cont+1
+                    transf = True
 
-        for file in glob.iglob(self.fonte+'/*'):
-            archive = os.path.basename(file)
-
-            if archive.split('.')[0] in archives:
-                shutil.move(file, 'selecionadas/' + archive)
-                print(f"{cont}. '{archive}' transferido com sucesso!")
-            else:
-                print(f"{cont}. '{archive}' não foi encontrado em {self.fonte}.")
+                    break
             
-            cont = cont + 1
+            if transf:
+                pass
+            else:
+                print(f"{cont}. '{file}' não está no PDF de fotos escolhidas.")
+                cont = cont + 1
 
 def main():
     root = tk.Tk()
